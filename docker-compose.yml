@@ -1,0 +1,44 @@
+
+services:
+  redis:
+    image: redis
+    container_name: redis_server
+    ports: 
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - elitecode_net
+
+  backend: 
+    build: 
+      context: ./server
+      dockerfile: Dockerfile.backend
+    container_name: elite_backend
+    env_file:
+      - ./server/backend/.env
+    ports:
+      - "4000:4000"
+      - "8080:8080"
+    depends_on:
+      - redis
+    networks:
+      - elitecode_net
+
+  worker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.worker
+    container_name: elite_worker
+    depends_on:
+      - redis
+    networks:
+      - elitecode_net
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  elitecode_net:
+    driver: bridge

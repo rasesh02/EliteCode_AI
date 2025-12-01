@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+RUN apk add --no-cache \
+    gcc g++ make \
+    python3 python3-dev py3-pip \
+    openjdk11-jdk redis bash
+
+
+WORKDIR /app
+
+COPY worker/package*.json ./worker/
+RUN cd worker && npm install
+
+COPY worker ./worker
+
+CMD ["node","worker/src/index.js"]
