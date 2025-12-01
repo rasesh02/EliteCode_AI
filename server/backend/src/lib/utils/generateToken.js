@@ -9,7 +9,7 @@ export const generateTokenAndSetCookie=(userId,res)=>{
         httpOnly: true, // prevent XSS attacks cross-site scripting attacks
 		//sameSite: "strict", // CSRF attacks cross-site request forgery attacks
 		//secure: process.env.NODE_ENV !== "development",
-        sameSite: "none",     // "lax" sometimes still blocks CORS cookies
-    secure: true 
+        sameSite: "None",     // "lax" sometimes still blocks CORS cookies
+    secure: false 
     })
 }
