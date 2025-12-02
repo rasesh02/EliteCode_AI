@@ -15,7 +15,7 @@ const app=express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://16.171.230.170:5173",   // if you host frontend manually
-  "http://16.171.230.170:4000",   
+  "http://16.171.230.170:4000",
 ];
 
 app.use(cors({
@@ -25,7 +25,7 @@ app.use(cors({
         }
         return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true
+    credentials: false
 }));
 
 

@@ -4,17 +4,17 @@ import jwt from "jsonwebtoken"
 
 export const protectRoute=async(req,res,next)=>{
     try{
-        console.log("i am hit")
-      //const token=req.cookies.jwt;
-      let token;
-    if (
+     // const token=req.cookies.jwt;
+    console.log("i am hit")
+    let token;
+     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
     ) {
-        console.log("in if")
+        console.log("in if ")
       token = req.headers.authorization.split(" ")[1]; // "Bearer <token>"
     }
-    console.log(token);
+    console.log(token) 
       if (!token) {
         return res.status(401).json({ error: "Unauthorized: No Token Provided" });
     }
