@@ -259,11 +259,8 @@ import { useNavigate } from "react-router-dom";
 //import { useAuth } from "../App"; // expects App.jsx to export/useAuth as earlier
 
 const LANGUAGES = [
-  { value: "cpp", label: "C++ 11" },
-  { value: "C++", label: "C++ 17" },
-  { value: "python", label: "Python 3" },
-  { value: "java", label: "Java" },
-  { value: "javascript", label: "JavaScript (Node)" },
+  { value: "C++", label: "C++ 11" },
+  { value: "Python", label: "Python 3" },
 ];
 
 export default function CreatePage() {
@@ -281,6 +278,10 @@ export default function CreatePage() {
   const [loadingGenerate, setLoadingGenerate] = useState(false);
   const [result, setResult] = useState(null); // { language, code, explanation, timestamp }
   const [generateError, setGenerateError] = useState(null);
+
+  // edit mode for generated code
+  const [editMode, setEditMode] = useState(false);
+  const [editedCode, setEditedCode] = useState("");
 
   // testcases generation state
   const [loadingTests, setLoadingTests] = useState(false);
@@ -553,21 +554,57 @@ export default function CreatePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(result.code || "");
-                    alert("Code copied to clipboard");
-                  }}
-                  className="text-xs px-3 py-1 rounded bg-gray-800 border border-gray-700"
-                >
-                  Copy
-                </button>
+                {!editMode ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        setEditedCode(result.code || "");
+                        setEditMode(true);
+                      }}
+                      className="text-xs px-3 py-1 rounded bg-blue-800 border border-blue-700 hover:bg-blue-700"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(result.code || "");
+                        alert("Code copied to clipboard");
+                      }}
+                      className="text-xs px-3 py-1 rounded bg-gray-800 border border-gray-700"
+                    >
+                      Copy
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setResult({ ...result, code: editedCode });
+                        setEditMode(false);
+                      }}
+                      className="text-xs px-3 py-1 rounded bg-green-800 border border-green-700 hover:bg-green-700"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditMode(false);
+                        setEditedCode("");
+                      }}
+                      className="text-xs px-3 py-1 rounded bg-gray-800 border border-gray-700 hover:bg-gray-700"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
                 <button
                   onClick={() => {
                     setResult(null);
                     setGenerateError(null);
                     setTestsResult(null);
                     setTestsError(null);
+                    setEditMode(false);
+                    setEditedCode("");
                   }}
                   className="text-xs px-3 py-1 rounded bg-gray-800 border border-gray-700"
                 >
@@ -576,12 +613,22 @@ export default function CreatePage() {
               </div>
             </div>
 
-            <pre
-              className="whitespace-pre-wrap font-mono text-sm text-gray-200 bg-[#070708] rounded p-4 border border-gray-900 overflow-auto"
-              style={{ maxHeight: "50vh" }}
-            >
-              {result.code || "// No code returned from server"}
-            </pre>
+            {!editMode ? (
+              <pre
+                className="whitespace-pre-wrap font-mono text-sm text-gray-200 bg-[#070708] rounded p-4 border border-gray-900 overflow-auto"
+                style={{ maxHeight: "50vh" }}
+              >
+                {result.code || "// No code returned from server"}
+              </pre>
+            ) : (
+              <textarea
+                value={editedCode}
+                onChange={(e) => setEditedCode(e.target.value)}
+                className="w-full font-mono text-sm text-gray-200 bg-[#070708] rounded p-4 border border-gray-700 overflow-auto"
+                style={{ maxHeight: "50vh", minHeight: "30vh" }}
+                placeholder="Edit your code here..."
+              />
+            )}
 
             {result.explanation && (
               <div className="mt-4">

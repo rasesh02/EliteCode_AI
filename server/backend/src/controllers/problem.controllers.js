@@ -2,6 +2,7 @@
 import {Problem} from "../models/problemModel.js"
 import {OpenAI} from "openai"
 import { User } from "../models/userModel.js";
+import {UserProblem} from "../models/userProblemModel.js"
 import {WebSocket} from "ws"
 
 function escapeRegex(text) {
@@ -681,8 +682,8 @@ export const generateCode=async(req,res)=>{
       messages,
       temperature: 0.1,
     });
-    console.log(response);
-    //console.log("OpenAI Response:", response.choices[0].message.content);
+    //console.log(response);
+    console.log("OpenAI Response:", response.choices[0].message.content);
 
     let data;
     try {
@@ -751,11 +752,12 @@ export const generateTests=async(req,res)=>{
   if (req.method !== "POST") {
   return res.status(405).json({ message: "Method not allowed" });
  }
- const {problem,constraint,code, recruiterQuestion,
+ const {problem,constraint,code, 
   mainFunction,
   language,
   pythonMainFunction,
   title}=req.body;
+ let recruiterQuestion=req.body.recruiterQuestion;
 
   if(!code){
     return res.status(404).json({message: "Code is required"});
@@ -811,7 +813,7 @@ export const generateTests=async(req,res)=>{
 
     // WebSocket communication with enhanced error handling
     // Use Docker service name when running in container, otherwise use env var
-    const websocketUrl =  'ws://localhost:8000' 
+    const websocketUrl =  'ws://localhost:8080' 
     console.log('🔌 Connecting to WebSocket:', websocketUrl);
     const ws = new WebSocket(websocketUrl);
 
@@ -865,6 +867,7 @@ export const generateTests=async(req,res)=>{
           };
 
           let newProblem;
+          recruiterQuestion=true; // For testing purposes, always save to main collection
           if (recruiterQuestion) {
             const newProb = new Problem(problemData);
             newProblem = await newProb.save();
@@ -977,7 +980,7 @@ export const generateTests=async(req,res)=>{
       continue;
      }
     }
-    const websocketUrl =  'ws://localhost:8000' 
+    const websocketUrl =  'ws://localhost:8080' 
    
     console.log('🔌 Connecting to WebSocket:', websocketUrl);
     const ws = new WebSocket(websocketUrl);

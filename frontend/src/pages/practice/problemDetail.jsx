@@ -1,12 +1,19 @@
 // src/pages/practice/ProblemDetail.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+// Ace editor & modes (ESM imports for Vite)
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-c_cpp";
+import "ace-builds/src-noconflict/mode-python";
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-tomorrow_night";
 
 /**
  * ProblemDetail.jsx
  *
  * - Fetches a problem object from /api/problem/:id
- * - Opens a websocket to ws://localhost:8000 for running/submitting jobs
+ * - Opens a websocket to ws://localhost:8080 for running/submitting jobs
  * - Editor persists to localStorage by problem id + language
  * - Run -> sends first 3 testcases
  * - Submit -> sends all testcases
@@ -18,29 +25,49 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
  *
  * Notes:
  * - Adjust fetch URL prefixes if your API uses /v1/... (e.g. /v1/problem/:id)
- * - Ensure websocket server is running on ws://localhost:8000
+ * - Ensure websocket server is running on ws://localhost:8080
  */
 
-// Try to load react-ace dynamically. If not present, fall back to textarea.
-let AceEditor = null;
-try {
-  // eslint-disable-next-line global-require
-  AceEditor = require("react-ace").default;
-  require("ace-builds/src-noconflict/mode-c_cpp");
-  require("ace-builds/src-noconflict/mode-python");
-  require("ace-builds/src-noconflict/mode-javascript");
-  require("ace-builds/src-noconflict/mode-java");
-  require("ace-builds/src-noconflict/theme-tomorrow_night");
-} catch (e) {
-  AceEditor = null;
-}
+// Using ESM imports above; AceEditor will be available if dependencies are installed
 
 const LANG_OPTIONS = [
   { value: "C++", label: "C++" },
-  { value: "python", label: "Python" },
-  { value: "javascript", label: "JavaScript" },
-  { value: "java", label: "Java" },
+  { value: "Python", label: "Python" },
+  { value: "Javascript", label: "JavaScript" },
+  { value: "Java", label: "Java" },
 ];
+
+// Language-specific boilerplate templates
+const BOILERPLATES = {
+  "C++": `// write your code here
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    // your logic
+    return 0;
+}`,
+  Python: `# write your code here
+def solve():
+    pass
+
+if __name__ == "__main__":
+    solve()`,
+  Javascript: `// write your code here
+function main() {
+  // your logic
+}
+
+main();`,
+  Java: `// write your code here
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // your logic
+    }
+}`,
+};
 
 function generateJobId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -102,9 +129,13 @@ export default function ProblemDetail() {
         const normalized = Array.isArray(data) ? data[0] : data;
         if (!cancelled) {
           setProblem(normalized);
-          // load saved code if present
+          // load saved code if present, else use boilerplate
           const saved = localStorage.getItem(storageKey(id, language));
-          if (saved) setEditorCode(saved);
+          if (saved && saved.trim().length > 0) {
+            setEditorCode(saved);
+          } else {
+            setEditorCode(BOILERPLATES[language] || "");
+          }
         }
       } catch (err) {
         if (!cancelled) {
@@ -125,7 +156,11 @@ export default function ProblemDetail() {
   // Load saved code when language changes (don't clobber unsaved edits)
   useEffect(() => {
     const saved = localStorage.getItem(storageKey(id, language));
-    if (saved) setEditorCode(saved);
+    if (saved && saved.trim().length > 0) {
+      setEditorCode(saved);
+    } else {
+      setEditorCode(BOILERPLATES[language] || "");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
 
@@ -140,7 +175,7 @@ export default function ProblemDetail() {
 
   // Open websocket on mount, close on unmount
   useEffect(() => {
-    const WS_URL = "ws://localhost:8000";
+    const WS_URL = "ws://localhost:8080";
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
@@ -208,7 +243,7 @@ export default function ProblemDetail() {
     }
 
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      alert("WebSocket not connected. Start ws server at ws://localhost:8000");
+      alert("WebSocket not connected. Start ws server at ws://localhost:8080");
       return;
     }
 
@@ -479,6 +514,13 @@ export default function ProblemDetail() {
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
+              <button
+                onClick={() => setEditorCode(BOILERPLATES[language] || "")}
+                className="px-3 py-1 rounded-full bg-[#0f0f0f] border border-gray-800 text-sm hover:bg-[#1f1f1f]"
+                title="Reset to boilerplate"
+              >
+                Reset
+              </button>
             </div>
 
             <div className="flex items-center gap-2">

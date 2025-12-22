@@ -3,13 +3,13 @@ import RedisManager from "./redisManager.js";
 
 const main=async function(){
     try {
-        const wss=new WebSocketServer({port: 8000});
-        console.log("Websocket server running on port 8000");
+        const wss=new WebSocketServer({port: 8080});
+        console.log("Websocket server running on port 8080");
         wss.on("connection",(ws)=>{
-             console.log("Client connected");
+            // console.log("Client connected");
             ws.on("message",async(msg)=>{
                 const data=JSON.parse(msg);
-                 console.log("Websocket received:", data);
+                 console.log("message from client received by websocket", data);
           const job = {
           code: data.editorCode,
           language: data.selectedLanguage,
@@ -19,7 +19,7 @@ const main=async function(){
         //
         const rm=await RedisManager.getInstance();
         const res=await rm.pushToQueue(job); 
-        console.log(res);
+        console.log("websocket sent this message: ",res);
         ws.send(JSON.stringify(res));
             })
         })

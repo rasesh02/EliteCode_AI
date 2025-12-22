@@ -11,7 +11,7 @@ export default function Navbar({ auth, logout }) {
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2 text-pink-400 font-semibold">
             <span className="text-lg">{'</>'}</span>
-            <span className="hidden sm:inline">QuickCode</span>
+            <span className="hidden sm:inline">EliteCodeAi</span>
           </Link>
 
           <nav className="ml-8 space-x-4">

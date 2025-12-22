@@ -62,7 +62,7 @@ class RedisManager{
 
         this.subscriber.subscribe(`${job_id}`,(message)=>{
          try {
-          console.log(`Subscribe received the message : ${message}`);
+          console.log(`Subscribe received the message : ${job_id}`);
           resolve(JSON.parse(message));
          } catch (error) {
            console.error("Error parsing response:", error);
@@ -73,7 +73,7 @@ class RedisManager{
          }
        });
        const pushedJob=await this.publisher.lPush("problems",JSON.stringify(executeableJob));
-       console.log(`job ${job_id} pushed to queue : `,pushedJob);
+       console.log(`job ${job_id} pushed to queue : `);
        })
     }
   }

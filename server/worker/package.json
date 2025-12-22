@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "python-shell": "^5.0.0",
     "redis": "^5.9.0"
   }
 }

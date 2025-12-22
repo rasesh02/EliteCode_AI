@@ -40,27 +40,67 @@ export class CppTestRunner {
     }
   }
 
-  async runExecutable(executable, input, timeout) {
-    return new Promise((resolve, reject) => {
-      const child = exec(
-        `"${executable}"`,
-        { timeout },
-        (error, stdout, stderr) => {
-          if (error) {
-            const err = new Error(stderr || "Runtime error");
-            err.stderr = stderr;
-            err.runtimeError = true;
-            reject(err);
-          } else {
-            resolve(stdout);
+  // async runExecutable(executable, input, timeout) {
+  //   return new Promise((resolve, reject) => {
+  //     const child = exec(
+  //       `"${executable}"`,
+  //       { timeout },
+  //       (error, stdout, stderr) => {
+  //         if (error) {
+  //           const err = new Error(stderr || "Runtime error");
+  //           err.stderr = stderr;
+  //           err.runtimeError = true;
+  //           reject(err);
+  //         } else {
+  //           resolve(stdout);
+  //         }
+  //       }
+  //     );
+
+  //     child.stdin.write(input);
+  //     child.stdin.end();
+  //   });
+  // }
+async runExecutable(executable, input, timeout) {
+  return new Promise((resolve, reject) => {
+    const child = exec(
+      `"${executable}"`,
+      { timeout },
+      (error, stdout, stderr) => {
+        if (error) {
+          const err = new Error(stderr || "Runtime error");
+          err.stderr = stderr;
+          err.runtimeError = true;
+          reject(err);
+        } else {
+          resolve(stdout);
+        }
+      }
+    );
+
+      // Safely write input: listen for stdin errors and guard writes
+      if (child.stdin) {
+        child.stdin.on("error", (e) => {
+          // Ignore EPIPE when the program exits before we finish writing
+          if (e && e.code === "EPIPE") {
+            console.warn("stdin EPIPE (program exited early)");
+            return;
+          }
+          console.warn("stdin error:", e?.message || e);
+        });
+        try {
+          if (!child.killed && child.stdin.writable) {
+            child.stdin.write(input);
+            child.stdin.end();
+          }
+        } catch (e) {
+          if (e && e.code !== "EPIPE") {
+            console.warn("stdin write failed:", e.message);
           }
         }
-      );
-
-      child.stdin.write(input);
-      child.stdin.end();
-    });
-  }
+      }
+  });
+}
 
   async execute(job) {
     console.log("job recieved at cpp runner ", job);

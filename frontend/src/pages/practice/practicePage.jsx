@@ -92,7 +92,8 @@ export default function PracticePage() {
 
        
         const res = await fetch(url, {
-          signal: controller.signal,
+          //signal: controller.signal,
+           method: "GET",
           credentials: "include", // <<< important — sends HttpOnly cookie
           headers:  { "Content-Type": "application/json" }
         });
