@@ -118,7 +118,7 @@ export default function ProblemDetail() {
     (async () => {
       try {
         // adjust path if your API uses /v1/...
-        const res = await fetch(`http://localhost:4000/v1/problem/${id}`, { credentials: "include" });
+        const res = await fetch(`http://16.171.23.225:4000/v1/problem/${id}`, { credentials: "include" });
         if (!res.ok) {
           const txt = await res.text().catch(() => null);
           throw new Error(txt || `Server returned ${res.status}`);

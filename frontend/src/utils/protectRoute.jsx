@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }) {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await fetch("http://localhost:4000/v1/auth/getUser", {
+                const res = await fetch("http://16.171.23.225:4000/v1/auth/getUser", {
                     credentials: "include"
                 });
 

@@ -7,26 +7,31 @@ const app=express();
 //     origin: process.env.CORS_ORIGIN,
 //     credentials: true
 // }))
-app.use(cors({
-    origin: "http://localhost:5173",  // IMPORTANT
-    credentials: true
-}));
-
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "http://16.171.230.170:5173",   // if you host frontend manually
-//   "http://16.171.230.170:4000",
-// ];
-
 // app.use(cors({
-//     origin: (origin, callback) => {
-//         if (!origin || allowedOrigins.includes(origin)) {
-//             return callback(null, true);
-//         }
-//         return callback(new Error("Not allowed by CORS"));
-//     },
+//     origin: "http://localhost:5173",  // IMPORTANT
 //     credentials: true
 // }));
+const allowedOrigins = [
+  "http://localhost:5173",           // local Vite dev
+  "http://16.171.23.225:5173",      // if frontend is served from EC2:5173
+  "http://16.171.23.225",           // if frontend is served from EC2 on port 80
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow non-browser clients (Postman, curl) with no origin
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+}));
+
+
 
 
 app.use(express.json({limit:"16kb"}));

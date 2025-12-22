@@ -18,7 +18,7 @@ const SignupPage = ({login}) => {
         setLoading(true);
         try {
             const res = await axios.post(
-                "http://localhost:4000/v1/auth/signup",
+                "http://16.171.23.225:4000/v1/auth/signup",
                 { name, email, password },
                 { withCredentials: true }
             );

@@ -9,13 +9,13 @@ export default defineConfig({
     proxy: {
       // forward any /v1 requests to your backend at :4000
     //   "/v1": {
-    //     target: "http://localhost:4000",
+    //     target: "http://16.171.23.225:4000",
     //     changeOrigin: true,
     //     secure: false
     //   },
       // forward /api if you use it for oauth etc
       "/api": {
-        target: "http://localhost:4000",
+        target: "http://16.171.23.225:4000",
         changeOrigin: true,
       }
     }
