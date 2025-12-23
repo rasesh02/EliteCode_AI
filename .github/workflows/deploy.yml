@@ -1,0 +1,31 @@
+name: Deploy backend to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST}}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script:
+            echo "Navigating to project directory..."
+            cd EliteCode_AI
+            git pull 
+            cd EliteCode_AI/server
+
+            echo "Building and starting Docker containers..."
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+
+            echo "Cleanup unused Docker data..."
+            docker system prune -f
