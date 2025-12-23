@@ -813,7 +813,7 @@ export const generateTests=async(req,res)=>{
 
     // WebSocket communication with enhanced error handling
     // Use Docker service name when running in container, otherwise use env var
-    const websocketUrl =  'ws://localhost:8080' 
+    const websocketUrl =  'ws://16.171.23.225:8080' 
     console.log('🔌 Connecting to WebSocket:', websocketUrl);
     const ws = new WebSocket(websocketUrl);
 
@@ -980,7 +980,7 @@ export const generateTests=async(req,res)=>{
       continue;
      }
     }
-    const websocketUrl =  'ws://localhost:8080' 
+    const websocketUrl =  'ws://16.171.23.225:8080' 
    
     console.log('🔌 Connecting to WebSocket:', websocketUrl);
     const ws = new WebSocket(websocketUrl);
