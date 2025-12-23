@@ -33,7 +33,6 @@ export default function LoginPage({ login }) {   // ⭐ login() comes from App.j
       const res = await fetch(`${API_BASE}/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ⬅ store JWT cookie automatically
         body: JSON.stringify({ name: name.trim(), password }),
       });
 
@@ -41,13 +40,18 @@ export default function LoginPage({ login }) {   // ⭐ login() comes from App.j
 
       if (!res.ok) throw new Error("Invalid email/password");
 
-      const User = await res.json();  // 📥 must return user {_id,name,email,...}
+      const data = await res.json();  // expects {_id, name, email, token}
+
+      // Store JWT token for subsequent API calls
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
 
       // 🔥 tell App.jsx → user is logged in
       const user={
-        id:User._id,
-        name:User.name
-      }
+		id:data._id,
+		name:data.name
+	  }
       login(user);
 
       navigate("/", { replace: true });  // redirect to dashboard

@@ -91,12 +91,15 @@ export default function PracticePage() {
         }
 
        
-        const res = await fetch(url, {
-          //signal: controller.signal,
-           method: "GET",
-          credentials: "include", // <<< important — sends HttpOnly cookie
-          headers:  { "Content-Type": "application/json" }
-        });
+        const token = localStorage.getItem("token");
+    const res = await fetch(url, {
+      //signal: controller.signal,
+       method: "GET",
+       headers:  {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+       },
+    });
         
         if (!res.ok) {
           const txt = await res.text().catch(() => null);

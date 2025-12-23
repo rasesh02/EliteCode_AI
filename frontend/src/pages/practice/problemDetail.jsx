@@ -117,8 +117,10 @@ export default function ProblemDetail() {
 
     (async () => {
       try {
-        // adjust path if your API uses /v1/...
-        const res = await fetch(`http://16.171.23.225:4000/v1/problem/${id}`, { credentials: "include" });
+    const token = localStorage.getItem("token");
+    const res = await fetch(`http://16.171.23.225:4000/v1/problem/${id}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
         if (!res.ok) {
           const txt = await res.text().catch(() => null);
           throw new Error(txt || `Server returned ${res.status}`);

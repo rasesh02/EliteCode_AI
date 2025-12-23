@@ -19,19 +19,19 @@ const SignupPage = ({login}) => {
         try {
             const res = await axios.post(
                 "http://16.171.23.225:4000/v1/auth/signup",
-                { name, email, password },
-                { withCredentials: true }
+                { name, email, password }
             );
             setLoading(false);
-            // backend sets cookie -> redirect to home
-            console.log(res)
-            const User =ires.data
-            console.log(User);
+            const data = res.data; // expects {_id, name, email, token}
+			
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+            }
             const user={
-                id:User._id,
-                name:User.name
+                id:data._id,
+                name:data.name
               }
-              login(user);
+            login(user);
             navigate("/");
         } catch (err) {
             setLoading(false);

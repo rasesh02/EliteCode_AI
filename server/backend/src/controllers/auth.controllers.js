@@ -32,14 +32,15 @@ export const signup=async(req,res)=>{
         password:hashPassword
     })
     if(newUser){
-        //
-        generateTokenAndSetCookie(newUser._id,res);
+        // Issue JWT and return it in response body (no cookies)
+        const token = generateTokenAndSetCookie(newUser._id);
 
         await newUser.save();
         res.status(201).json({
             _id: newUser._id,
             name : newUser.name,
-            email: newUser.email
+            email: newUser.email,
+            token,
         })
 
     }
@@ -61,13 +62,14 @@ export const login=async(req,res)=>{
     if (!user || !isPasswordCorrect) {
 			return res.status(401).json({ error: "Invalid username or password" });
 		}
-    //
-    generateTokenAndSetCookie(user._id,res);  
-    
-     res.status(201).json({
+    // Issue JWT and return it in response body (no cookies)
+    const token = generateTokenAndSetCookie(user._id);
+	
+    res.status(201).json({
             _id: user.id,
             name : user.name,
-            email: user.email
+            email: user.email,
+            token,
         })
     
     
@@ -79,8 +81,8 @@ export const login=async(req,res)=>{
 
 export const logout=async(req,res)=>{
     try {
-    res.cookie("jwt","",{maxAge: 0});
-    res.status(201).json({message:"User logged out successfully"})
+    // With header-based auth, client is responsible for discarding the token.
+    res.status(200).json({message:"User logged out successfully"})
     } catch (error) {
         console.log("error while logging out ",error);
         res.status(500).json({ error: "Internal Server Error" });

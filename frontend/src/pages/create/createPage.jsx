@@ -316,12 +316,15 @@ export default function CreatePage() {
     setLoadingGenerate(true);
 
     try {
-      const res = await fetch("http://16.171.23.225:4000/v1/problem/create", {
-        method: "POST",
-        credentials: "include", // important for HttpOnly JWT cookie
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://16.171.23.225:4000/v1/problem/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(payload),
+    });
 
       const text = await res.text();
 
@@ -402,12 +405,15 @@ export default function CreatePage() {
     setLoadingTests(true);
 
     try {
-      const res = await fetch("http://16.171.23.225:4000/v1/problem/generate", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(testsPayload),
-      });
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://16.171.23.225:4000/v1/problem/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(testsPayload),
+    });
 
       const text = await res.text();
 

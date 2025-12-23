@@ -8,8 +8,16 @@ export default function ProtectedRoute({ children }) {
     useEffect(() => {
         const checkAuth = async () => {
             try {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    setIsAuth(false);
+                    setLoading(false);
+                    return;
+                }
                 const res = await fetch("http://16.171.23.225:4000/v1/auth/getUser", {
-                    credentials: "include"
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
 
                 if (res.ok) {
