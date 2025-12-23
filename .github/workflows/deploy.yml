@@ -15,8 +15,9 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST}}
+          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          script:
+          script: |
             echo "Navigating to project directory..."
             cd EliteCode_AI
             git pull 
@@ -29,4 +30,3 @@ jobs:
 
             echo "Cleanup unused Docker data..."
             docker system prune -f
-            
