@@ -29,3 +29,4 @@ jobs:
 
             echo "Cleanup unused Docker data..."
             docker system prune -f
+            
