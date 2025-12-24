@@ -12,10 +12,12 @@ const app=express();
 //     credentials: true
 // }));
 const allowedOrigins = [
-  "http://localhost:5173",           // local Vite dev
-  "http://16.171.23.225:5173",      // if frontend is served from EC2:5173
-  "http://16.171.23.225",
-    "http://16.171.23.225:4000",          // if frontend is served from EC2 on port 80
+    "http://localhost:5173",           // local Vite dev
+    "http://16.171.23.225:5173",      // if frontend is served from EC2:5173
+    "http://16.171.23.225",
+	"http://16.171.23.225:4000",          // if frontend is served from EC2 on port 80
+    "https://www.elitecode-ai.club",   // custom domain (HTTPS)
+    "https://d1fexxetc6tspa.cloudfront.net", // CloudFront distribution
 ];
 
 app.use(cors({
