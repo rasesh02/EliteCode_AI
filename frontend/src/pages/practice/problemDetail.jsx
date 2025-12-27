@@ -177,7 +177,7 @@ export default function ProblemDetail() {
 
   // Open websocket on mount, close on unmount
   useEffect(() => {
-    const WS_URL = "wss://api.elitecode-ai.club";
+    const WS_URL = "wss://api.elitecode-ai.club/ws/";
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
@@ -245,7 +245,7 @@ export default function ProblemDetail() {
     }
 
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      alert("WebSocket not connected. Start ws server at wss://api.elitecode-ai.club");
+      alert("WebSocket not connected. Start ws server at wss://api.elitecode-ai.club/ws/");
       return;
     }
 

@@ -813,7 +813,7 @@ export const generateTests=async(req,res)=>{
 
     // WebSocket communication with enhanced error handling
     // Use Docker service name when running in container, otherwise use env var
-    const websocketUrl =  'wss://api.elitecode-ai.club' 
+    const websocketUrl =  'ws://127.0.0.1:8080' 
     console.log('🔌 Connecting to WebSocket:', websocketUrl);
     const ws = new WebSocket(websocketUrl);
 
