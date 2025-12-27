@@ -84,10 +84,10 @@ export default function PracticePage() {
             params.set("tags", selectedTags.join(","));
           params.set("page", page);
           params.set("limit", limit);
-          url = `http://16.171.23.225:4000/v1/problem/search?${params.toString()}`;
+          url = `https://api.elitecode-ai.club/v1/problem/search?${params.toString()}`;
         } else {
           // fetch all problems page
-          url = `http://16.171.23.225:4000/v1/problem?page=${page}`;
+          url = `https://api.elitecode-ai.club/v1/problem?page=${page}`;
         }
 
        

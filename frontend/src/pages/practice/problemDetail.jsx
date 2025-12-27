@@ -118,7 +118,7 @@ export default function ProblemDetail() {
     (async () => {
       try {
     const token = localStorage.getItem("token");
-    const res = await fetch(`http://16.171.23.225:4000/v1/problem/${id}`, {
+    const res = await fetch(`https://api.elitecode-ai.club/v1/problem/${id}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
         if (!res.ok) {
@@ -177,7 +177,7 @@ export default function ProblemDetail() {
 
   // Open websocket on mount, close on unmount
   useEffect(() => {
-    const WS_URL = "ws://16.171.23.225:8080";
+    const WS_URL = "ws://api.elitecode-ai.club";
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
@@ -245,7 +245,7 @@ export default function ProblemDetail() {
     }
 
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      alert("WebSocket not connected. Start ws server at ws://16.171.23.225:8080");
+      alert("WebSocket not connected. Start ws server at ws://api.elitecode-ai.club");
       return;
     }
 

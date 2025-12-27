@@ -51,7 +51,7 @@ export default function CreatePage({auth}) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://16.171.23.225:4000/v1/problem/create", {
+      const res = await fetch("https://api.elitecode-ai.club/v1/problem/create", {
         method: "POST",
         credentials: "include", // important so the HttpOnly JWT cookie is sent
         headers: {
@@ -317,7 +317,7 @@ export default function CreatePage() {
 
     try {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://16.171.23.225:4000/v1/problem/create", {
+    const res = await fetch("https://api.elitecode-ai.club/v1/problem/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -406,7 +406,7 @@ export default function CreatePage() {
 
     try {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://16.171.23.225:4000/v1/problem/generate", {
+    const res = await fetch("https://api.elitecode-ai.club/v1/problem/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

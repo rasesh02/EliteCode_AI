@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children }) {
                     setLoading(false);
                     return;
                 }
-                const res = await fetch("http://16.171.23.225:4000/v1/auth/getUser", {
+                const res = await fetch("https://api.elitecode-ai.club/v1/auth/getUser", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
