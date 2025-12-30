@@ -1,172 +1,160 @@
-# EliteCodeAI - Online Code Execution Platform
+# LiteAIcode - Online Code Practice & Code Execution Platform
 
-EliteCodeAI is a full-stack web application that allows users to write, execute, and test code in multiple programming languages. It features real-time code execution, problem management, and user authentication.
+LiteAIcode is an AI powered full-stack web application for practicing coding problems, writing and executing code in multiple languages, and tracking progress. It provides authentication, problem management, and a Docker-isolated execution environment powered by a Redis-backed worker.
 
 ## 🚀 Features
 
-- **Multi-Language Support**: Execute code in Python, JavaScript, C++, and Java
-- **Real-Time Execution**: WebSocket-based real-time code execution
-- **Problem Management**: Create, manage, and solve coding problems
-- **User Authentication**: Secure authentication with NextAuth.js (supports Google OAuth)
-- **Test Case Generation**: AI-powered test case generation using OpenAI
-- **Docker-Based Execution**: Isolated code execution environment
-- **Redis Queue**: Job queue management for scalable code execution
+- **Authentication & Authorization**: User sign-up/sign-in with protected routes.
+- **Problem Management**: Create, list, and solve coding problems with test cases.
+- **Interactive Code Editor**: Ace editor for writing and running code in-browser.
+- **Multi-Language Execution**: Python, C++, JavaScript, and Java via a worker service.
+- **Real-Time Feedback**: WebSocket updates for execution status/results.
+- **Docker-Isolated Workers**: Sandbox for untrusted code.
+- **Redis Queue**: Job queue connecting backend and worker.
+- **AI-Assisted Utilities**: Optional OpenAI-powered helpers.
 
 ## 🏗️ Architecture
 
-The project is structured as a monorepo with two main components:
+Monorepo orchestrated by Docker Compose:
 
 ```
-QKCODE/
-├── EliteCodeAI/           # Frontend (Next.js)
-├── EliteCodeAI_Server/    # Backend & Worker Services
-│   ├── backend/         # WebSocket server
-│   └── Worker-1/        # Code execution worker
-└── docker-compose.yml   # Docker orchestration
+LiteAIcode/
+├── frontend/            # React + Vite SPA
+├── server/
+│   ├── backend/         # Express API + WebSocket server
+│   └── worker/          # Code execution worker (Python, C++, JS, Java)
+└── docker-compose.yml   # Redis, backend, worker services
 ```
+
+- **Frontend**: React + Vite SPA communicating with backend via HTTP/WebSockets.
+- **Backend**: Express + ws; auth, problems, WebSocket bridge; publishes jobs to Redis.
+- **Worker**: Node-based runners consuming jobs from Redis; executes code per language runner.
+- **Redis**: Central queue between backend and worker.
 
 ## 🛠️ Tech Stack
 
-### Frontend (EliteCodeAI)
-- **Framework**: Next.js 15.2.4
-- **Authentication**: NextAuth.js with Google OAuth
-- **Database**: MongoDB (Mongoose ODM)
-- **Styling**: CSS Modules
-- **HTTP Client**: Axios
+### Frontend (frontend/)
+- React 19 + Vite
+- react-router-dom
+- Tailwind CSS (PostCSS)
+- Ace via react-ace / ace-builds
+- Axios
 
-### Backend (EliteCodeAI_Server)
-- **Runtime**: Node.js 20
-- **WebSocket**: ws library
-- **Cache/Queue**: Redis
-- **Language Runners**: Custom execution engines for Python, C++, Java, JavaScript
+### Backend (server/backend/)
+- Node.js + Express
+- ws (WebSocket)
+- MongoDB + Mongoose
+- JWT auth + bcrypt
+- Redis client
+- openai SDK (optional)
+
+### Worker (server/worker/)
+- Node.js worker
+- Redis consumer
+- Language runners: python-shell and child processes for JS/C++/Java/Python
+
+### Infrastructure
+- Docker & Docker Compose
+- Example prod: frontend on S3 + CloudFront; backend/worker on server/EC2 with TLS and CORS configured
 
 ## 📋 Prerequisites
 
 - Docker & Docker Compose
-- MongoDB Atlas account (or local MongoDB)
-- Google OAuth credentials (optional, for social login)
-- OpenAI API key (optional, for AI features)
+- Node.js (for local dev without Docker)
+- MongoDB instance (local or Atlas)
+- Redis (Docker or local)
+- OpenAI API key (optional)
 
 ## 🚀 Quick Start with Docker
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/EliteCodeAI-REPO.git
-cd QKCODE
+git clone https://github.com/YOUR_USERNAME/LiteAIcode.git
+cd LiteAIcode
 ```
 
-### 2. Set Up Environment Variables
+### 2. Backend & worker environment
 
-Create a `.env.local` file in the `EliteCodeAI/` directory:
-
-```bash
-cp env.example EliteCodeAI/.env.local
-```
-
-Edit `EliteCodeAI/.env.local` with your credentials:
+Create `server/backend/.env`:
 
 ```env
-# API Keys
-NEXT_PUBLIC_API_OPEN_API=your_openai_api_key_here
-
-# Frontend URL
-NEXT_PUBLIC_API_FRONTEND_PROBLEM=http://localhost:3000
-
-# Backend WebSocket URL
-NEXT_PUBLIC_API_WEBSOCKET_URL=ws://localhost:8080
-
-# MongoDB Connection
-MONGODB_URL=your_mongodb_connection_string_here
-
-# JWT Secret (generate a random string)
-NEXT_PUBLIC_API_JWT_SECRET=your_jwt_secret_here
-
-# NextAuth Configuration
-NEXTAUTH_SECRET=your_nextauth_secret_here
-NEXTAUTH_URL=http://localhost:3000
-
-# Google OAuth (optional)
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Admin Key
-NEXT_PUBLIC_API_ADMIN_KEY=your_admin_key_here
-
-# Redis URL (for Docker)
+MONGODB_URI=your_mongodb_connection_string_here
+JWT_SECRET=your_jwt_secret_here
 REDIS_URL=redis://redis:6379
+OPENAI_API_KEY=your_openai_api_key_here   # optional
+CLIENT_ORIGIN=http://localhost:5173
+PORT=4000
+WS_PORT=8080
 ```
 
-### 3. Create `.env` File at Root
+Create `server/worker/.env` if needed:
 
-Create a `.env` file at the root for Docker Compose build arguments:
-
-```bash
-# Copy the NEXT_PUBLIC_* variables from EliteCodeAI/.env.local
-NEXT_PUBLIC_API_FRONTEND_PROBLEM=http://localhost:3000
-NEXT_PUBLIC_API_OPEN_API=your_openai_api_key_here
-NEXT_PUBLIC_API_WEBSOCKET_URL=ws://localhost:8080
-NEXT_PUBLIC_API_JWT_SECRET=your_jwt_secret_here
-NEXT_PUBLIC_API_ADMIN_KEY=your_admin_key_here
+```env
+REDIS_URL=redis://redis:6379
+OPENAI_API_KEY=your_openai_api_key_here   # optional
 ```
 
-### 4. Start the Application
+### 3. Start services with Docker
 
 ```bash
 docker compose up --build
 ```
 
-This will start:
-- **Frontend** on `http://localhost:3000`
-- **Backend WebSocket Server** on `ws://localhost:8080`
-- **Redis** on `localhost:6380`
-- **Worker Services** for code execution
+Starts Redis (6379), backend API (4000), WebSocket server (8080), and worker.
 
-### 5. Access the Application
-
-Open your browser and navigate to:
-```
-http://localhost:3000
-```
-
-## 🔧 Development Setup (Without Docker)
-
-### Frontend (EliteCodeAI)
+### 4. Run frontend locally (dev)
 
 ```bash
-cd EliteCodeAI
-npm install --legacy-peer-deps
+cd frontend
+npm install
 npm run dev
 ```
 
-### Backend & Worker
+Vite serves at `http://localhost:5173`.
+
+### 5. Access the app
+
+Open `http://localhost:5173` and sign up/login to start practicing problems.
+
+## 🔧 Development setup (without Docker)
+
+### Frontend
 
 ```bash
-cd EliteCodeAI_Server
-
-# Terminal 1 - Backend
-cd backend
+cd frontend
 npm install
-node src/index.js
+npm run dev
+```
 
-# Terminal 2 - Worker
-cd Worker-1
+### Backend
+
+```bash
+cd server/backend
+npm install
+node src/index.js   # or src/app.js if that is your entry
+```
+
+### Worker
+
+```bash
+cd server/worker
 npm install
 node src/index.js
 ```
 
-### Redis (Required)
+### Redis
 
 ```bash
 # Using Docker
 docker run -d -p 6379:6379 redis:7.2-alpine
 
-# Or install Redis locally
-brew install redis  # macOS
+# Or local (macOS example)
+brew install redis
 redis-server
 ```
 
-## 🐳 Docker Commands
+## 🐳 Docker commands
 
 ```bash
 # Start all services
@@ -178,153 +166,158 @@ docker compose logs -f
 # Stop all services
 docker compose down
 
-# Rebuild a specific service
-docker compose up --build EliteCodeAI-frontend
+# Rebuild without cache
+docker compose build --no-cache
 
-# View logs for a specific service
-docker compose logs -f EliteCodeAI-frontend
+# Logs per service
+docker compose logs -f backend
+docker compose logs -f worker
 ```
 
-## 📁 Project Structure
+## 📁 Project structure
 
-### EliteCodeAI/ (Frontend)
+### Root
+
 ```
-EliteCodeAI/
-├── src/
-│   ├── components/       # React components
-│   ├── pages/            # Next.js pages & API routes
-│   │   ├── api/          # API endpoints
-│   │   ├── auth/         # Authentication pages
-│   │   └── problems/     # Problem pages
-│   ├── lib/              # MongoDB connection
-│   ├── models/           # Mongoose models
-│   ├── middleware/       # Auth & rate limiting
-│   ├── styles/           # CSS styles
-│   └── utils/            # Utility functions
-├── public/               # Static assets
-└── dockerfile            # Frontend Dockerfile
+LiteAIcode/
+├── docker-compose.yml
+├── frontend/
+└── server/
+    ├── backend/
+    └── worker/
 ```
 
-### EliteCodeAI_Server/ (Backend)
+### Frontend (React + Vite)
+
 ```
-EliteCodeAI_Server/
+frontend/
+├── index.html
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.cjs
+└── src/
+    ├── App.jsx
+    ├── index.jsx
+    ├── index.css
+    ├── components/
+    │   └── Navbar.jsx
+    ├── pages/
+    │   ├── auth/
+    │   │   ├── login/        # LoginPage.jsx
+    │   │   └── signup/       # SignupPage.jsx
+    │   ├── home/             # HomePage.jsx
+    │   ├── create/           # createPage.jsx (create problem)
+    │   └── practice/         # practicePage.jsx, problemDetail.jsx
+    └── utils/
+        └── protectRoute.jsx  # Route protection helper
+```
+
+### Backend & worker
+
+```
+server/
+├── Dockerfile
+├── Dockerfile.backend
+├── Dockerfile.worker
 ├── backend/
+│   ├── package.json
 │   └── src/
-│       ├── index.js          # WebSocket server
-│       └── RedisManager.js   # Redis pub/sub
-├── Worker-1/
-│   └── src/
-│       ├── index.js          # Worker entry point
-│       ├── python_runner.js  # Python executor
-│       ├── cpp_runner.js     # C++ executor
-│       ├── java_runner.js    # Java executor
-│       └── js_runner.js      # JavaScript executor
-└── dockerfile                # Backend Dockerfile
+│       ├── app.js
+│       ├── index.js
+│       ├── redisManager.js
+│       ├── ws.js
+│       ├── controllers/
+│       │   ├── auth.controllers.js
+│       │   └── problem.controllers.js
+│       ├── db/
+│       │   └── index.js
+│       ├── lib/utils/
+│       │   └── generateToken.js
+│       ├── middlewares/
+│       │   └── protectRoute.js
+│       ├── models/
+│       │   ├── problemModel.js
+│       │   ├── userModel.js
+│       │   └── userProblemModel.js
+│       └── routes/
+│           ├── auth.routes.js
+│           ├── login.routes.js
+│           └── problem.routes.js
+└── worker/
+    ├── package.json
+    └── src/
+        ├── index.js
+        ├── cpp_runner.js
+        ├── java_runner.js
+        ├── js_runner.js
+        └── python_runner.js
 ```
 
-## 🔐 Environment Variables
+## 🔐 Environment variables
 
-### Frontend Environment Variables
+### Frontend
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `NEXT_PUBLIC_API_FRONTEND_PROBLEM` | Frontend URL | ✅ Yes |
-| `NEXT_PUBLIC_API_WEBSOCKET_URL` | WebSocket server URL | ✅ Yes |
-| `MONGODB_URL` | MongoDB connection string | ✅ Yes |
-| `NEXT_PUBLIC_API_JWT_SECRET` | JWT signing secret | ✅ Yes |
-| `NEXTAUTH_SECRET` | NextAuth session secret | ✅ Yes |
-| `NEXTAUTH_URL` | NextAuth callback URL | ✅ Yes |
-| `NEXT_PUBLIC_API_OPEN_API` | OpenAI API key | ⚠️ Optional |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | ⚠️ Optional |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | ⚠️ Optional |
-| `NEXT_PUBLIC_API_ADMIN_KEY` | Admin access key | ⚠️ Optional |
+| VITE_API_BASE_URL | Backend API base URL (e.g. http://localhost:4000) | Yes |
+| VITE_WS_URL | WebSocket URL (e.g. ws://localhost:8080) | Yes |
 
-### Backend Environment Variables
+Example `frontend/.env`:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `REDIS_URL` | Redis connection URL | `redis://redis:6379` |
+```env
+VITE_API_BASE_URL=http://localhost:4000
+VITE_WS_URL=ws://localhost:8080
+```
 
-## 🚨 Important Security Notes
+### Backend
 
-⚠️ **Never commit these files:**
-- `.env`
-- `.env.local`
-- `.env.local.backup`
-- Any file containing API keys or secrets
+| Variable | Description | Required |
+|----------|-------------|----------|
+| MONGODB_URI | MongoDB connection string | Yes |
+| JWT_SECRET | JWT signing secret | Yes |
+| REDIS_URL | Redis connection URL | Yes |
+| OPENAI_API_KEY | OpenAI API key for AI features | Optional |
+| PORT | HTTP port (default 4000) | Optional |
+| WS_PORT | WebSocket port (default 8080) | Optional |
 
-✅ These are already in `.gitignore`
+### Worker
 
-## 🧪 Testing the Application
+| Variable | Description | Required |
+|----------|-------------|----------|
+| REDIS_URL | Redis connection URL | Yes |
+| OPENAI_API_KEY | OpenAI API key (if used) | Optional |
 
-### Test Code Execution
+## 🚨 Security notes
 
-1. Sign up or log in at `http://localhost:3000/auth`
-2. Navigate to "Problems" section
-3. Select a problem or create a new one
-4. Write your code in the editor
-5. Click "Run" to execute
+- Do not commit any `.env` files or secrets.
+- Keep API keys, JWT secrets, and database credentials out of version control.
 
-### Supported Languages
+## 🧪 Testing the application
 
-- **Python** (.py)
-- **JavaScript** (.js)
-- **C++** (.cpp)
-- **Java** (.java)
+1. Start Redis, backend, worker, and frontend (Docker or local).
+2. Sign up or log in from the frontend.
+3. Navigate to practice/problems.
+4. Create or open a problem.
+5. Write code and click Run.
+6. Review results returned from the worker through the backend.
+
+Supported languages: Python, JavaScript, C++, Java.
 
 ## 🔍 Troubleshooting
 
-### MongoDB Connection Issues
+- MongoDB: verify `MONGODB_URI`; for Atlas, whitelist IP and check roles.
+- Redis/queue: ensure Redis reachable at `REDIS_URL`; check worker logs.
+- Ports: `lsof -i :4000`, `lsof -i :8080`, `lsof -i :5173`; kill blocking PID.
+- Docker build/runtime: `docker system prune -a`, `docker compose build --no-cache`, `docker compose up -d`.
+- Frontend cannot reach backend: verify `VITE_API_BASE_URL` and `VITE_WS_URL`; if frontend is on S3/CloudFront, ensure backend is reachable publicly and CORS allows it.
 
-- Ensure your MongoDB connection string is correct
-- Check if your IP is whitelisted in MongoDB Atlas
-- Verify the database user has proper permissions
+## 📝 API routes (overview)
 
-### Port Already in Use
-
-```bash
-# Check what's using the port
-lsof -i :3000
-lsof -i :8080
-lsof -i :6380
-
-# Kill the process
-kill -9 <PID>
-```
-
-### Docker Build Failures
-
-```bash
-# Clean Docker cache
-docker system prune -a
-
-# Rebuild without cache
-docker compose build --no-cache
-```
-
-### Environment Variables Not Loading
-
-- Make sure `.env.local` is in the `EliteCodeAI/` directory
-- Restart the Docker containers after changing env vars
-- For `NEXT_PUBLIC_*` variables, rebuild the frontend image
-
-## 📝 API Routes
-
-### Authentication
-- `POST /api/auth/signup` - User registration
-- `POST /api/auth/signin` - User login
-- `GET /api/auth/[...nextauth]` - NextAuth endpoints
-
-### Problems
-- `GET /api/problem` - Get all problems
-- `GET /api/problem/[id]` - Get specific problem
-- `POST /api/problem/add` - Create new problem
-- `POST /api/problem/run` - Execute code
-
-### Code Execution
-- WebSocket connection to `ws://localhost:8080`
-- Send code execution requests via WebSocket
-- Receive real-time execution results
+Check `server/backend/src/routes` for details. Typical patterns:
+- Auth: POST /api/auth/signup, POST /api/auth/login
+- Problems: GET /api/problems, GET /api/problems/:id, POST /api/problems, POST /api/problems/:id/submit
+- Code execution: WebSocket on ws://<host>:8080 (default); send code/jobs, receive real-time results.
 
 ## 🤝 Contributing
 
@@ -336,22 +329,21 @@ docker compose build --no-cache
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License.
 
 ## 🙏 Acknowledgments
 
-- Next.js team for the amazing framework
-- OpenAI for AI-powered features
-- MongoDB for database services
-- Docker for containerization
+- React & Vite teams
+- MongoDB
+- Docker
+- Redis
+- OpenAI (optional AI utilities)
 
 ## 📞 Support
 
-If you have any questions or run into issues, please:
-1. Check the troubleshooting section
-2. Search existing GitHub issues
-3. Create a new issue with detailed information
+If you have questions or issues:
+1. See Troubleshooting above
+2. Check existing GitHub issues
+3. Open a new issue with details
 
 ---
-
-
