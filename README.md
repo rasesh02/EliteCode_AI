@@ -1,6 +1,6 @@
-# LiteAIcode - Online Code Practice & Code Execution Platform
+# EliteCodeAI - Online Code Practice & Code Execution Platform
 
-LiteAIcode is an AI powered full-stack web application for practicing coding problems, writing and executing code in multiple languages, and tracking progress. It provides authentication, problem management, and a Docker-isolated execution environment powered by a Redis-backed worker.
+EliteCodeAI is an AI powered full-stack web application for practicing coding problems, writing and executing code in multiple languages, and tracking progress. It provides authentication, problem management, and a Docker-isolated execution environment powered by a Redis-backed worker.
 
 ## 🚀 Features
 
@@ -18,7 +18,7 @@ LiteAIcode is an AI powered full-stack web application for practicing coding pro
 Monorepo orchestrated by Docker Compose:
 
 ```
-LiteAIcode/
+EliteCodeAI/
 ├── frontend/            # React + Vite SPA
 ├── server/
 │   ├── backend/         # Express API + WebSocket server
@@ -70,8 +70,8 @@ LiteAIcode/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/LiteAIcode.git
-cd LiteAIcode
+git clone https://github.com/YOUR_USERNAME/EliteCodeAI.git
+cd EliteCodeAI
 ```
 
 ### 2. Backend & worker environment
