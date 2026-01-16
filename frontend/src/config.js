@@ -6,4 +6,4 @@ export const config = {
 };
 
 // Export individual values for convenience
-export const { API_BASE_URL, WS_URL } = config;
+export const { API_BASE_URL, WS_URL } = config; 
