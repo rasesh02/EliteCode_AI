@@ -1,6 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://api.elitecode-ai.club";
+
 export default function ProtectedRoute({ children }) {
     const [loading, setLoading] = useState(true);
     const [isAuth, setIsAuth] = useState(false);
@@ -14,7 +16,7 @@ export default function ProtectedRoute({ children }) {
                     setLoading(false);
                     return;
                 }
-                const res = await fetch("https://api.elitecode-ai.club/v1/auth/getUser", {
+                const res = await fetch(`${API_BASE}/v1/auth/getUser`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

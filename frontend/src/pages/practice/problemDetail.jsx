@@ -9,6 +9,9 @@ import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-tomorrow_night";
 
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://api.elitecode-ai.club";
+const WS_BASE_URL= import.meta.env.VITE_WS_URL || "wss://api.elitecode-ai.club/ws";
 /**
  * ProblemDetail.jsx
  *
@@ -118,7 +121,7 @@ export default function ProblemDetail() {
     (async () => {
       try {
     const token = localStorage.getItem("token");
-    const res = await fetch(`https://api.elitecode-ai.club/v1/problem/${id}`, {
+    const res = await fetch(`${API_BASE}/v1/problem/${id}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
         if (!res.ok) {
@@ -177,7 +180,7 @@ export default function ProblemDetail() {
 
   // Open websocket on mount, close on unmount
   useEffect(() => {
-    const WS_URL = "wss://api.elitecode-ai.club/ws/";
+    const WS_URL = WS_BASE_URL;
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
@@ -245,7 +248,7 @@ export default function ProblemDetail() {
     }
 
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      alert("WebSocket not connected. Start ws server at wss://api.elitecode-ai.club/ws/");
+      alert(`WebSocket not connected. Start ws server at ${WS_BASE_URL}`);
       return;
     }
 

@@ -51,7 +51,7 @@ export default function CreatePage({auth}) {
     setLoading(true);
 
     try {
-      const res = await fetch("https://api.elitecode-ai.club/v1/problem/create", {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v1/problem/create`, {
         method: "POST",
         credentials: "include", // important so the HttpOnly JWT cookie is sent
         headers: {
@@ -258,6 +258,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 //import { useAuth } from "../App"; // expects App.jsx to export/useAuth as earlier
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://api.elitecode-ai.club";
+
 const LANGUAGES = [
   { value: "C++", label: "C++ 11" },
   { value: "Python", label: "Python 3" },
@@ -317,7 +319,7 @@ export default function CreatePage() {
 
     try {
     const token = localStorage.getItem("token");
-    const res = await fetch("https://api.elitecode-ai.club/v1/problem/create", {
+    const res = await fetch(`${API_BASE}/v1/problem/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -406,7 +408,7 @@ export default function CreatePage() {
 
     try {
     const token = localStorage.getItem("token");
-    const res = await fetch("https://api.elitecode-ai.club/v1/problem/generate", {
+    const res = await fetch(`${API_BASE}/v1/problem/generate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

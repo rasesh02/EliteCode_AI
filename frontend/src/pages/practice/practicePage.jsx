@@ -21,6 +21,8 @@ import { useNavigate, createSearchParams } from "react-router-dom";
  * Tailwind classes used to match dark theme of other pages.
  */
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://api.elitecode-ai.club";
+
 const DEFAULT_TAGS = [
   "All Topics",
   "Algorithms",
@@ -84,10 +86,10 @@ export default function PracticePage() {
             params.set("tags", selectedTags.join(","));
           params.set("page", page);
           params.set("limit", limit);
-          url = `https://api.elitecode-ai.club/v1/problem/search?${params.toString()}`;
+          url = `${API_BASE}/v1/problem/search?${params.toString()}`;
         } else {
           // fetch all problems page
-          url = `https://api.elitecode-ai.club/v1/problem?page=${page}`;
+          url = `${API_BASE}/v1/problem?page=${page}`;
         }
 
        
