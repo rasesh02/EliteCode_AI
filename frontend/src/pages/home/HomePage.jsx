@@ -12,7 +12,8 @@ import {
   Twitter, 
   Linkedin,
   CheckCircle2,
-  PlusCircle
+  PlusCircle,
+  Sparkles
 } from "lucide-react";
 
 // --- Animation Variants ---
@@ -188,10 +189,10 @@ function StatsSection() {
     <section className="border-y border-white/5 bg-white/[0.02]">
       <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         {[
-          { label: "Active Users", value: "10k+" },
-          { label: "Daily Submissions", value: "50k+" },
-          { label: "Problems", value: "1,200+" },
-          { label: "Companies", value: "50+" },
+          { label: "Active Users", value: "100+" },
+          { label: "Daily Submissions", value: "500+" },
+          { label: "Problems", value: "100+" },
+          { label: "Recruiters", value: "50+" },
         ].map((stat, i) => (
           <div key={i} className="text-center">
             <div className="text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500 mb-1">
@@ -218,10 +219,10 @@ function FeaturesSection() {
       desc: "Execute your code in milliseconds with our high-performance cloud runtime."
     },
     {
-      icon: <Globe className="w-6 h-6 text-indigo-400" />,
-      title: "Global Contests",
-      desc: "Compete with developers worldwide in weekly contests and climb the leaderboard."
-    }
+  icon: <Sparkles className="w-6 h-6 text-violet-400" />,
+  title: "Instant Problem Synthesis",
+  desc: "Turn a simple text prompt into a comprehensive coding challenge. Craft, customize, and share your unique algorithms in seconds."
+}
   ];
 
   return (
@@ -313,13 +314,13 @@ function Footer() {
         <div>
           <h4 className="font-semibold mb-4">Connect</h4>
           <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <a href="https://github.com/rasesh02" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
               <Github className="w-5 h-5 text-gray-400" />
             </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <a href="https://x.com/RanaRasesh93278" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
               <Twitter className="w-5 h-5 text-gray-400" />
             </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <a href="https://www.linkedin.com/in/rasesh-rana-008302197/" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
               <Linkedin className="w-5 h-5 text-gray-400" />
             </a>
           </div>
@@ -327,7 +328,7 @@ function Footer() {
       </div>
       
       <div className="max-w-7xl mx-auto pt-8 border-t border-white/5 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
-        <p>&copy; 2024 EliteCodeAi. All rights reserved.</p>
+        <p>&copy; 2025 EliteCodeAi. All rights reserved.</p>
         <div className="flex gap-6 mt-4 md:mt-0">
           <a href="#" className="hover:text-gray-400">Privacy Policy</a>
           <a href="#" className="hover:text-gray-400">Terms of Service</a>
